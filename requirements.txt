@@ -1,0 +1,9 @@
+aiosqlite
+databases
+watchdog
+streamlit
+streamlit-autorefresh
+pandas
+plotly
+pillow
+openpyxl
