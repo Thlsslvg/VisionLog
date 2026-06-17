@@ -61,7 +61,7 @@ The application automatically monitors log folders, processes rejection logs, st
 * SQLite
 * Watchdog
 
-### Dashboard (Stable Version)
+### Frontend (Stable Version)
 
 * Streamlit
 * Plotly
