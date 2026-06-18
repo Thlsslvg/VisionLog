@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+Logs
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ t("logs") }}</h1>
+
+
+<form method="GET" class="filters">
+
+    <select name="camera">
+        <option value="">{{ t("camera") }}</option>
+        {% for cam in cameras %}
+        <option value="{{ cam }}" {% if selected_camera == cam %}selected{% endif %}>
+            {{ cam }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <select name="defect">
+        <option value="">{{ t("defect") }}</option>
+        {% for item in defects %}
+        <option value="{{ item }}" {% if selected_defect == item %}selected{% endif %}>
+            {{ item }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <select name="status">
+        <option value="">{{ t("status") }}</option>
+        {% for item in statuses %}
+        <option value="{{ item }}" {% if selected_status == item %}selected{% endif %}>
+            {{ item }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <input type="text"
+           name="search"
+           placeholder="{{ t('search_file') }}"
+           value="{{ search or '' }}">
+
+    <button type="submit">{{ t("filters") }}</button>
+
+    <a class="export-button" href="/export_csv">{{ t("export_csv") }}</a>
+
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>{{ t("camera") }}</th>
+            <th>{{ t("status") }}</th>
+            <th>{{ t("defect") }}</th>
+            <th>Time</th>
+            <th>{{ t("file") }}</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.camera }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.defect }}</td>
+            <td>{{ log.time }}</td>
+            <td>{{ log.filename }}</td>
+            <td>{{ log.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

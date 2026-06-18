@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics
+{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ t("analytics") }}</h1>
+
+
+<div class="chart-grid">
+
+    <div class="chart-card">
+        <h2>Global Defect Ranking</h2>
+        <canvas id="defectsChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <h2>Rejections by Camera</h2>
+        <canvas id="camerasChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <h2>Rejections by Date</h2>
+        <canvas id="datesChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <h2>Rejections by Hour</h2>
+        <canvas id="hoursChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+    const defectsLabels = [
+        {% for item in data.defects %}
+            "{{ item.defect }}",
+        {% endfor %}
+    ];
+
+    const defectsData = [
+        {% for item in data.defects %}
+            {{ item.count }},
+        {% endfor %}
+    ];
+
+    const camerasLabels = [
+        {% for item in data.cameras %}
+            "Camera {{ item.camera }}",
+        {% endfor %}
+    ];
+
+    const camerasData = [
+        {% for item in data.cameras %}
+            {{ item.count }},
+        {% endfor %}
+    ];
+
+    const datesLabels = [
+        {% for item in data.dates %}
+            "{{ item.date }}",
+        {% endfor %}
+    ];
+
+    const datesData = [
+        {% for item in data.dates %}
+            {{ item.count }},
+        {% endfor %}
+    ];
+
+    const hoursLabels = [
+        {% for item in data.hours %}
+            "{{ item.hour }}h",
+        {% endfor %}
+    ];
+
+    const hoursData = [
+        {% for item in data.hours %}
+            {{ item.count }},
+        {% endfor %}
+    ];
+</script>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+{% endblock %}

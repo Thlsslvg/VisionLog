@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}
+VisionLog Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1>VisionLog Analytics</h1>
+<p class="subtitle">Visteon Vision Monitoring System</p>
+
+{% if alarm_active %}
+<div class="alarm">
+    🚨 {{ t("alarm") }}: {{ new_rejections }} / {{ alarm_limit }}
+    <form method="POST">
+        <button name="acknowledge" value="1">{{ t("acknowledge") }}</button>
+    </form>
+</div>
+{% else %}
+<div class="normal">
+    🟢 {{ t("system_normal") }} — {{ new_rejections }} / {{ alarm_limit }}
+</div>
+{% endif %}
+
+<div class="cards">
+
+    <div class="card">
+        <h3>{{ t("total_rejections") }}</h3>
+        <p>{{ data.total_rejections }}</p>
+    </div>
+
+    <div class="card">
+        <h3>{{ t("main_defect") }}</h3>
+        <p>{{ data.main_defect }}</p>
+    </div>
+
+    <div class="card">
+        <h3>{{ t("critical_camera") }}</h3>
+        <p>{{ data.critical_camera }}</p>
+    </div>
+
+</div>
+
+<h2>{{ t("verify_log") }}</h2>
+
+<form method="POST" enctype="multipart/form-data" class="verify-box">
+
+    <label class="file-upload">
+        <input type="file" name="log_file" accept=".txt" required>
+    </label>
+
+    <button type="submit" name="validate_log" value="1">
+        {{ t("validate") }}
+    </button>
+
+</form>
+
+{% if validation %}
+<div class="validation-box">
+    <h3>{{ validation.message }}</h3>
+
+    {% if validation.valid %}
+        <p>{{ t("camera") }}: {{ validation.parsed.camera }}</p>
+        <p>{{ t("status") }}: {{ validation.parsed.status }}</p>
+        <p>{{ t("defect") }}: {{ validation.parsed.defect }}</p>
+        <p>Time: {{ validation.parsed.time }}</p>
+    {% endif %}
+
+    <pre>{{ validation.content }}</pre>
+</div>
+{% endif %}
+
+<h2>{{ t("recent_logs") }}</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>{{ t("camera") }}</th>
+            <th>{{ t("status") }}</th>
+            <th>{{ t("defect") }}</th>
+            <th>Time</th>
+            <th>{{ t("file") }}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for log in data.recent_logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.camera }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.defect }}</td>
+            <td>{{ log.time }}</td>
+            <td>{{ log.filename }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

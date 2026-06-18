@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+Settings
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ t("settings") }}</h1>
+
+
+<h2>{{ t("language") }}</h2>
+
+<form method="POST" class="settings-form">
+
+    <select name="language">
+        <option value="en" {% if settings.language == "en" %}selected{% endif %}>
+            English
+        </option>
+
+        <option value="pt" {% if settings.language == "pt" %}selected{% endif %}>
+            Português
+        </option>
+    </select>
+
+    <button type="submit">{{ t("save") }}</button>
+
+</form>
+
+<h2>{{ t("system_status") }}</h2>
+
+<div class="cards">
+
+    <div class="card">
+        <h3>{{ t("database") }}</h3>
+        <p>{% if settings.database_exists %}OK{% else %}Missing{% endif %}</p>
+    </div>
+
+    <div class="card">
+        <h3>{{ t("log_folder") }}</h3>
+        <p>{% if settings.log_folder_exists %}OK{% else %}Missing{% endif %}</p>
+    </div>
+
+    <div class="card">
+        <h3>TXT Files</h3>
+        <p>{{ settings.total_txt_files }}</p>
+    </div>
+
+    <div class="card">
+        <h3>DB Records</h3>
+        <p>{{ settings.total_db_records }}</p>
+    </div>
+
+</div>
+
+<h2>System Paths</h2>
+
+<table>
+    <tr>
+        <th>{{ t("database") }}</th>
+        <td>{{ settings.database_path }}</td>
+    </tr>
+
+    <tr>
+        <th>{{ t("log_folder") }}</th>
+        <td>{{ settings.log_folder }}</td>
+    </tr>
+</table>
+
+{% endblock %}

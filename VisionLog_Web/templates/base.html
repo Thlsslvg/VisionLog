@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo-area">
+        <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="Logo">
+        <h2>VisionLog</h2>
+    </div>
+
+    <nav>
+        <a href="/">📊 {{ t("dashboard") }}</a>
+        <a href="/analytics">📈 {{ t("analytics") }}</a>
+        <a href="/logs">📋 {{ t("logs") }}</a>
+        <a href="/settings">⚙️ {{ t("settings") }}</a>
+    </nav>
+
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
