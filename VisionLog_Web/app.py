@@ -1,8 +1,12 @@
 import csv
 import json
 import sqlite3
-from io import StringIO
+import sys
+from datetime import datetime
+from io import StringIO, BytesIO
 from pathlib import Path
+
+import pandas as pd
 
 from flask import (
     Flask,
@@ -20,11 +24,37 @@ app.secret_key = "visionlog_secret_key"
 
 
 BASE_DIR = Path(__file__).resolve().parent
-PROJECT_DIR = BASE_DIR.parent
+
+if getattr(sys, "frozen", False):
+    APP_DIR = Path(sys.executable).resolve().parent
+else:
+    APP_DIR = BASE_DIR
+
+
+def find_project_root():
+    possible_paths = [
+        APP_DIR,
+        APP_DIR.parent,
+        APP_DIR.parent.parent,
+        APP_DIR.parent.parent.parent,
+        BASE_DIR,
+        BASE_DIR.parent
+    ]
+
+    for path in possible_paths:
+        db_path = path / "Back-End" / "database" / "visionlog.db"
+
+        if db_path.exists():
+            return path
+
+    return BASE_DIR.parent
+
+
+PROJECT_DIR = find_project_root()
 
 DB_PATH = PROJECT_DIR / "Back-End" / "database" / "visionlog.db"
 LOG_FOLDER = PROJECT_DIR / "Back-End" / "logs" / "log"
-CONFIG_PATH = BASE_DIR / "config.json"
+CONFIG_PATH = APP_DIR / "config.json"
 
 ALARM_LIMIT = 5
 
@@ -50,6 +80,7 @@ TEXTS = {
         "status": "Status",
         "file": "File",
         "export_csv": "Export CSV",
+        "export_excel": "Export Excel",
         "language": "Language",
         "save": "Save",
         "system_status": "System Status",
@@ -77,6 +108,7 @@ TEXTS = {
         "status": "Status",
         "file": "Arquivo",
         "export_csv": "Exportar CSV",
+        "export_excel": "Exportar Excel",
         "language": "Idioma",
         "save": "Salvar",
         "system_status": "Status do Sistema",
@@ -171,6 +203,28 @@ def get_dashboard_data():
     }
 
 
+def get_today_rejections():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM rejections
+        WHERE substr(created_at, 1, 10) = ?
+        """,
+        (today,)
+    )
+
+    count = cursor.fetchone()[0]
+
+    connection.close()
+
+    return count
+
+
 def get_analytics_data():
     connection = get_connection()
     cursor = connection.cursor()
@@ -257,10 +311,17 @@ def validate_log_content(content):
 def dashboard():
     data = get_dashboard_data()
 
+    today_rejections = get_today_rejections()
+    today_key = datetime.now().strftime("%Y-%m-%d")
+
+    if session.get("alarm_date") != today_key:
+        session["alarm_date"] = today_key
+        session["ack_count"] = 0
+
     if "ack_count" not in session:
         session["ack_count"] = 0
 
-    new_rejections = data["total_rejections"] - session["ack_count"]
+    new_rejections = today_rejections - session["ack_count"]
     alarm_active = new_rejections >= ALARM_LIMIT
 
     validation = None
@@ -268,7 +329,7 @@ def dashboard():
     if request.method == "POST":
 
         if "acknowledge" in request.form:
-            session["ack_count"] = data["total_rejections"]
+            session["ack_count"] = today_rejections
             return redirect(url_for("dashboard"))
 
         uploaded_file = request.files.get("log_file")
@@ -392,6 +453,47 @@ def export_csv():
     )
 
 
+@app.route("/export_excel")
+def export_excel():
+    logs_data = fetch_all_logs()
+
+    data = []
+
+    for log in logs_data:
+        data.append(
+            {
+                "ID": log["id"],
+                "Camera": log["camera"],
+                "Status": log["status"],
+                "Defect": log["defect"],
+                "Time": log["time"],
+                "Filename": log["filename"],
+                "Created At": log["created_at"]
+            }
+        )
+
+    df = pd.DataFrame(data)
+
+    output = BytesIO()
+
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(
+            writer,
+            index=False,
+            sheet_name="Logs"
+        )
+
+    output.seek(0)
+
+    return Response(
+        output.getvalue(),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": "attachment; filename=visionlog_logs.xlsx"
+        }
+    )
+
+
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
     config = load_config()
@@ -426,7 +528,8 @@ def settings():
 
 if __name__ == "__main__":
     app.run(
-        debug=True,
+        debug=False,
         host="127.0.0.1",
-        port=5000
+        port=5000,
+        use_reloader=False
     )
