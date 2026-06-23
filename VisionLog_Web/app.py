@@ -85,7 +85,13 @@ TEXTS = {
         "save": "Save",
         "system_status": "System Status",
         "database": "Database",
-        "log_folder": "Log Folder"
+        "log_folder": "Log Folder",
+        "refresh": "Refresh",
+        "no_data": "No data available yet.",
+        "no_logs": "No logs found yet.",
+        "no_recent_logs": "No recent logs available.",
+        "no_analytics": "No analytics data available yet.",
+        "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running."
     },
 
     "pt": {
@@ -113,7 +119,13 @@ TEXTS = {
         "save": "Salvar",
         "system_status": "Status do Sistema",
         "database": "Banco de Dados",
-        "log_folder": "Pasta de Logs"
+        "log_folder": "Pasta de Logs",
+        "refresh": "Atualizar",
+        "no_data": "Ainda não há dados disponíveis.",
+        "no_logs": "Nenhum log encontrado ainda.",
+        "no_recent_logs": "Nenhum log recente disponível.",
+        "no_analytics": "Ainda não há dados suficientes para análise.",
+        "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução."
     }
 }
 
@@ -180,29 +192,6 @@ def fetch_all_logs(camera=None, defect=None, status=None, search=None):
     return logs
 
 
-def get_dashboard_data():
-    logs = fetch_all_logs()
-
-    total = len(logs)
-
-    defects = {}
-    cameras = {}
-
-    for log in logs:
-        defects[log["defect"]] = defects.get(log["defect"], 0) + 1
-        cameras[log["camera"]] = cameras.get(log["camera"], 0) + 1
-
-    main_defect = max(defects, key=defects.get) if defects else "-"
-    critical_camera = max(cameras, key=cameras.get) if cameras else "-"
-
-    return {
-        "total_rejections": total,
-        "main_defect": main_defect,
-        "critical_camera": critical_camera,
-        "recent_logs": logs[:5]
-    }
-
-
 def get_today_rejections():
     connection = get_connection()
     cursor = connection.cursor()
@@ -223,6 +212,30 @@ def get_today_rejections():
     connection.close()
 
     return count
+
+
+def get_dashboard_data():
+    logs = fetch_all_logs()
+
+    total = len(logs)
+
+    defects = {}
+    cameras = {}
+
+    for log in logs:
+        defects[log["defect"]] = defects.get(log["defect"], 0) + 1
+        cameras[log["camera"]] = cameras.get(log["camera"], 0) + 1
+
+    main_defect = max(defects, key=defects.get) if defects else "-"
+    critical_camera = max(cameras, key=cameras.get) if cameras else "-"
+
+    return {
+        "total_rejections": total,
+        "main_defect": main_defect,
+        "critical_camera": critical_camera,
+        "recent_logs": logs[:5],
+        "has_data": total > 0
+    }
 
 
 def get_analytics_data():
@@ -269,7 +282,8 @@ def get_analytics_data():
         "defects": defects,
         "cameras": cameras,
         "dates": dates,
-        "hours": hours
+        "hours": hours,
+        "has_data": bool(defects or cameras or dates or hours)
     }
 
 
@@ -328,6 +342,9 @@ def dashboard():
 
     if request.method == "POST":
 
+        if "refresh" in request.form:
+            return redirect(url_for("dashboard"))
+
         if "acknowledge" in request.form:
             session["ack_count"] = today_rejections
             return redirect(url_for("dashboard"))
@@ -369,7 +386,8 @@ def dashboard():
         alarm_active=alarm_active,
         new_rejections=new_rejections,
         alarm_limit=ALARM_LIMIT,
-        validation=validation
+        validation=validation,
+        today_rejections=today_rejections
     )
 
 
@@ -408,7 +426,8 @@ def logs():
         selected_camera=camera,
         selected_defect=defect,
         selected_status=status,
-        search=search
+        search=search,
+        has_logs=len(logs_data) > 0
     )
 
 
