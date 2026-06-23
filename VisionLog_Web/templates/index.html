@@ -9,11 +9,27 @@ VisionLog Dashboard
 <h1>VisionLog Analytics</h1>
 <p class="subtitle">Visteon Vision Monitoring System</p>
 
+<form method="POST" style="margin-bottom: 25px;">
+    <button
+        type="submit"
+        name="refresh"
+        value="1"
+        class="refresh-button">
+        🔄 {{ t("refresh") }}
+    </button>
+</form>
+
 {% if alarm_active %}
 <div class="alarm">
-    🚨 {{ t("alarm") }}: {{ new_rejections }} / {{ alarm_limit }}
+    <div>
+        <strong>🚨 {{ t("alarm") }}</strong>
+        <p>{{ new_rejections }} / {{ alarm_limit }}</p>
+    </div>
+
     <form method="POST">
-        <button name="acknowledge" value="1">{{ t("acknowledge") }}</button>
+        <button type="submit" name="acknowledge" value="1">
+            {{ t("acknowledge") }}
+        </button>
     </form>
 </div>
 {% else %}
@@ -23,7 +39,6 @@ VisionLog Dashboard
 {% endif %}
 
 <div class="cards">
-
     <div class="card">
         <h3>{{ t("total_rejections") }}</h3>
         <p>{{ data.total_rejections }}</p>
@@ -38,21 +53,16 @@ VisionLog Dashboard
         <h3>{{ t("critical_camera") }}</h3>
         <p>{{ data.critical_camera }}</p>
     </div>
-
 </div>
 
 <h2>{{ t("verify_log") }}</h2>
 
 <form method="POST" enctype="multipart/form-data" class="verify-box">
-
-    <label class="file-upload">
-        <input type="file" name="log_file" accept=".txt" required>
-    </label>
+    <input type="file" name="log_file" accept=".txt" required>
 
     <button type="submit" name="validate_log" value="1">
         {{ t("validate") }}
     </button>
-
 </form>
 
 {% if validation %}
@@ -72,6 +82,7 @@ VisionLog Dashboard
 
 <h2>{{ t("recent_logs") }}</h2>
 
+{% if data.recent_logs %}
 <table>
     <thead>
         <tr>
@@ -97,5 +108,12 @@ VisionLog Dashboard
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="empty-state">
+    <h3>{{ t("no_recent_logs") }}</h3>
+    <p>{{ t("place_logs") }}</p>
+</div>
+{% endif %}
 
 {% endblock %}
+
