@@ -8,7 +8,6 @@ Logs
 
 <h1>{{ t("logs") }}</h1>
 
-
 <form method="GET" class="filters">
 
     <select name="camera">
@@ -38,16 +37,28 @@ Logs
         {% endfor %}
     </select>
 
-    <input type="text"
-           name="search"
-           placeholder="{{ t('search_file') }}"
-           value="{{ search or '' }}">
+    <input
+        type="text"
+        name="search"
+        placeholder="{{ t('search_file') }}"
+        value="{{ search or '' }}"
+    >
 
-    <button type="submit">{{ t("filters") }}</button>
+    <button type="submit">
+        {{ t("filters") }}
+    </button>
 
-    <a class="export-button" href="/export_csv">{{ t("export_csv") }}</a>
+    <a class="export-button" href="/export_csv">
+        {{ t("export_csv") }}
+    </a>
+
+    <a class="export-button" href="/export_excel">
+        {{ t("export_excel") }}
+    </a>
 
 </form>
+
+{% if has_logs %}
 
 <table>
     <thead>
@@ -76,5 +87,19 @@ Logs
         {% endfor %}
     </tbody>
 </table>
+
+{% else %}
+
+<div class="empty-state">
+
+    <h2>📋 {{ t("no_logs") }}</h2>
+
+    <p>
+        {{ t("place_logs") }}
+    </p>
+
+</div>
+
+{% endif %}
 
 {% endblock %}
