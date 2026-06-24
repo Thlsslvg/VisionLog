@@ -276,6 +276,24 @@ def get_analytics_data():
     """)
     hours = cursor.fetchall()
 
+    cursor.execute("""
+        SELECT substr(created_at, 1, 10) AS date, defect, COUNT(*) AS count
+        FROM rejections
+        WHERE created_at IS NOT NULL
+        GROUP BY date, defect
+        ORDER BY date
+    """)
+    defect_trend = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT substr(created_at, 1, 10) AS date, camera, COUNT(*) AS count
+        FROM rejections
+        WHERE created_at IS NOT NULL
+        GROUP BY date, camera
+        ORDER BY date
+    """)
+    camera_trend = cursor.fetchall()
+
     connection.close()
 
     return {
@@ -283,6 +301,8 @@ def get_analytics_data():
         "cameras": cameras,
         "dates": dates,
         "hours": hours,
+        "defect_trend": defect_trend,
+        "camera_trend": camera_trend,
         "has_data": bool(defects or cameras or dates or hours)
     }
 
