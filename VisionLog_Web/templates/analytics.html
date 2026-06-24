@@ -1,70 +1,137 @@
 {% extends "base.html" %}
 
 {% block title %}
-Settings
+Analytics
+{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
 
-<h1>{{ t("settings") }}</h1>
+<h1>{{ t("analytics") }}</h1>
 
+{% if data.has_data %}
 
-<h2>{{ t("language") }}</h2>
+<div class="chart-grid">
 
-<form method="POST" class="settings-form">
-
-    <select name="language">
-        <option value="en" {% if settings.language =="en" %}selected{% endif %}>
-            English
-        </option>
-
-        <option value="pt" {% if settings.language =="pt" %}selected{% endif %}>
-            Português
-        </option>
-    </select>
-
-    <button type="submit">{{ t("save") }}</button>
-
-</form>
-
-<h2>{{ t("system_status") }}</h2>
-
-<div class="cards">
-
-    <div class="card">
-        <h3>{{ t("database") }}</h3>
-        <p>{% if settings.database_exists %}OK{% else %}Missing{% endif %}</p>
+    <div class="chart-card">
+        <h2>Global Defect Ranking</h2>
+        <canvas id="defectsChart"></canvas>
     </div>
 
-    <div class="card">
-        <h3>{{ t("log_folder") }}</h3>
-        <p>{% if settings.log_folder_exists %}OK{% else %}Missing{% endif %}</p>
+    <div class="chart-card">
+        <h2>Rejections by Camera</h2>
+        <canvas id="camerasChart"></canvas>
     </div>
 
-    <div class="card">
-        <h3>TXT Files</h3>
-        <p>{{ settings.total_txt_files }}</p>
+    <div class="chart-card">
+        <h2>Rejections by Date</h2>
+        <canvas id="datesChart"></canvas>
     </div>
 
-    <div class="card">
-        <h3>DB Records</h3>
-        <p>{{ settings.total_db_records }}</p>
+    <div class="chart-card">
+        <h2>Rejections by Hour</h2>
+        <canvas id="hoursChart"></canvas>
+    </div>
+
+    <div class="chart-card full">
+        <h2>Defect Trend by Date</h2>
+        <canvas id="defectTrendChart"></canvas>
+    </div>
+
+    <div class="chart-card full">
+        <h2>Camera Trend by Date</h2>
+        <canvas id="cameraTrendChart"></canvas>
     </div>
 
 </div>
 
-<h2>System Paths</h2>
+<script>
+const defectsLabels = [
+    {% for item in data.defects %}
+        "{{ item.defect }}",
+    {% endfor %}
+];
 
-<table>
-    <tr>
-        <th>{{ t("database") }}</th>
-        <td>{{ settings.database_path }}</td>
-    </tr>
+const defectsData = [
+    {% for item in data.defects %}
+        {{ item.count }},
+    {% endfor %}
+];
 
-    <tr>
-        <th>{{ t("log_folder") }}</th>
-        <td>{{ settings.log_folder }}</td>
-    </tr>
-</table>
+const camerasLabels = [
+    {% for item in data.cameras %}
+        "Camera {{ item.camera }}",
+    {% endfor %}
+];
+
+const camerasData = [
+    {% for item in data.cameras %}
+        {{ item.count }},
+    {% endfor %}
+];
+
+const datesLabels = [
+    {% for item in data.dates %}
+        "{{ item.date }}",
+    {% endfor %}
+];
+
+const datesData = [
+    {% for item in data.dates %}
+        {{ item.count }},
+    {% endfor %}
+];
+
+const hoursLabels = [
+    {% for item in data.hours %}
+        "{{ item.hour }}h",
+    {% endfor %}
+];
+
+const hoursData = [
+    {% for item in data.hours %}
+        {{ item.count }},
+    {% endfor %}
+];
+
+const defectTrendRaw = [
+    {% for item in data.defect_trend %}
+        {
+            date: "{{ item.date }}",
+            defect: "{{ item.defect }}",
+            count: {{ item.count }}
+        },
+    {% endfor %}
+];
+
+const cameraTrendRaw = [
+    {% for item in data.camera_trend %}
+        {
+            date: "{{ item.date }}",
+            camera: "Camera {{ item.camera }}",
+            count: {{ item.count }}
+        },
+    {% endfor %}
+];
+</script>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+{% else %}
+
+<div class="empty-state">
+
+    <h2>📊 {{ t("no_analytics") }}</h2>
+
+    <p>
+        {{ t("place_logs") }}
+    </p>
+
+</div>
+
+{% endif %}
 
 {% endblock %}
