@@ -1,193 +1,237 @@
-# VisionLog Analytics
+# VisionLog
 
-VisionLog Analytics is a log monitoring and analytics system developed for industrial vision inspection environments.
+VisionLog is a manufacturing quality monitoring system developed for industrial vision inspection environments.
 
-The application automatically monitors log folders, processes rejection logs, stores data in SQLite, and provides dashboards, analytics, filtering, and export tools for production analysis.
+The project automatically processes inspection logs, stores rejection data in a SQLite database, generates analytics dashboards, and provides monitoring tools for production quality analysis.
 
 ---
 
-## Features
+# Features
 
-### Log Monitoring
+## Dashboard
 
-* Automatic folder monitoring using Watchdog
-* Real-time log detection
-* Automatic log parsing
-* SQLite database storage
-
-### Dashboard
-
-* Total rejections
-* Main defect detection
+* Total rejections counter
+* Main defect identification
 * Critical camera identification
-* Recent logs visualization
-* Alarm system
-* Manual log validation
+* Daily alarm system
+* Alarm acknowledgment
+* Manual dashboard refresh
+* Recent processed logs table
+* Log file validation (.txt)
 
-### Analytics
+## Analytics
 
 * Global defect ranking
 * Rejections by camera
 * Rejections by date
 * Rejections by hour
-* Interactive charts
+* Defect trend by date (multi-line chart)
+* Camera trend by date (multi-line chart)
 
-### Logs
+## Logs
 
-* Complete log history
-* Filters by:
+* Full rejection database visualization
+* Filter by camera
+* Filter by defect
+* Filter by status
+* Search by filename
+* Export CSV
+* Export Excel
 
-  * Camera
-  * Defect
-  * Status
-  * Filename
-* CSV export
+## Settings
 
-### Settings
-
-* System status
-* Database information
-* Log folder information
 * Language selection
-* Portuguese / English support
+* Database status
+* Log folder status
+* TXT file count
+* Database record count
+* System paths visualization
 
 ---
 
-## Technologies
+# Technologies
 
-### Backend
+## Backend
 
 * Python
-* SQLite
-* Watchdog
-
-### Frontend (Stable Version)
-
-* Streamlit
-* Plotly
-* Pandas
-
-### Experimental Frontend
-
 * Flask
+* SQLite
+
+## Frontend
+
 * HTML5
 * CSS3
 * JavaScript
 * Chart.js
 
+## Data Processing
+
+* Pandas
+* OpenPyXL
+
 ---
 
-## Project Structure
+# Database
+
+SQLite database:
 
 ```text
-Back-End/
-│
-├── dashboard/
-├── database/
-├── logs/
-├── models/
-├── observer/
-├── parser/
-├── services/
-│
-├── main.py
-├── config.py
-├── requirements.txt
-└── README.md
-│
-├── VisionLog_Web/
+visionlog.db
+```
 
+Main table:
+
+```sql
+rejections
+```
+
+Stored fields:
+
+```text
+id
+camera
+status
+defect
+time
+filename
+created_at
 ```
 
 ---
 
-## Installation
+# Alarm System
 
-### Clone Repository
+The alarm system now operates using only the current day's rejections.
 
-```bash
-git clone https://github.com/thlsslvg/VisionLog.git
-cd VisionLog
+Behavior:
+
+* Alarm threshold: 5 rejections
+* Previous day rejections are ignored
+* Alarm resets automatically each day
+* User can acknowledge current day alarms
+
+---
+
+# Log Validation
+
+Supported format:
+
+```text
+Camera: 5
+Status: FAIL
+Defect: Glue
+Time: 16:29
 ```
 
-### Create Virtual Environment
+Validation checks:
 
-```bash
-python -m venv .venv
-```
+* Required fields
+* Format verification
+* Content preview
 
-### Activate Environment
+---
 
-Windows:
+# Analytics
 
-```bash
-.venv\Scripts\activate
-```
+Available charts:
 
-Linux:
+### Global Defect Ranking
 
-```bash
-source .venv/bin/activate
-```
+Displays the most frequent defects.
 
-### Install Dependencies
+### Rejections by Camera
 
-```bash
-pip install -r requirements.txt
+Displays rejection distribution by inspection camera.
+
+### Rejections by Date
+
+Displays production rejection evolution.
+
+### Rejections by Hour
+
+Displays rejection distribution by hour.
+
+### Defect Trend by Date
+
+Multi-line chart displaying each defect type over time.
+
+### Camera Trend by Date
+
+Multi-line chart displaying each camera rejection trend.
+
+---
+
+# Export Functions
+
+Supported formats:
+
+* CSV
+* XLSX (Excel)
+
+Generated files:
+
+```text
+visionlog_logs.csv
+visionlog_logs.xlsx
 ```
 
 ---
 
-## Run Application
+# Executable Version
 
-### Watchdog Service
+The web dashboard can be distributed as a standalone executable using PyInstaller.
 
-```bash
-python main.py
-```
-
-### Dashboard
+Build command:
 
 ```bash
-streamlit run dashboard/App.py
+pyinstaller --onedir --name VisionLogWeb --add-data "templates;templates" --add-data "static;static" run_web.py
 ```
 
----
+Run:
 
-## Current Status
+```text
+dist/VisionLogWeb/VisionLogWeb.exe
+```
 
-### Stable Version
+The executable launches:
 
-* Streamlit Dashboard
-* SQLite Integration
-* Watchdog Monitoring
-* Analytics
-* CSV Export
-* Multi-language Support
+```text
+http://127.0.0.1:5000
+```
 
-### Experimental Version
-
-* Flask Frontend
-* Custom HTML/CSS Interface
-* Modern Dashboard Design
+automatically in the default browser.
 
 ---
 
-## Future Improvements
+# Current Status
 
-* Excel Export
-* PDF Report Generation
-* User Authentication
-* Advanced Analytics
-* Email Notifications
-* Production KPI Reports
+Project status:
 
+✅ Dashboard completed
+
+✅ Analytics completed
+
+✅ Logs completed
+
+✅ Settings completed
+
+✅ CSV export
+
+✅ Excel export
+
+✅ Daily alarm system
+
+✅ Log validation
+
+✅ Flask migration completed
+
+✅ Executable generation completed
+
+✅ Multi-line analytics charts
 ---
 
-## Author
+# Author
 
 Thales Silva
 
-Industrial Vision Analytics Project
-
-2026
+Industrial Vision Monitoring Project
