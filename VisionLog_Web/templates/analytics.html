@@ -18,32 +18,44 @@ Analytics
 
     <div class="chart-card">
         <h2>Global Defect Ranking</h2>
-        <canvas id="defectsChart"></canvas>
+        <div class="chart-box">
+            <canvas id="defectsChart"></canvas>
+        </div>
     </div>
 
     <div class="chart-card">
         <h2>Rejections by Camera</h2>
-        <canvas id="camerasChart"></canvas>
+        <div class="chart-box">
+            <canvas id="camerasChart"></canvas>
+        </div>
     </div>
 
     <div class="chart-card">
         <h2>Rejections by Date</h2>
-        <canvas id="datesChart"></canvas>
+        <div class="chart-box">
+            <canvas id="datesChart"></canvas>
+        </div>
     </div>
 
     <div class="chart-card">
         <h2>Rejections by Hour</h2>
-        <canvas id="hoursChart"></canvas>
+        <div class="chart-box">
+            <canvas id="hoursChart"></canvas>
+        </div>
     </div>
 
-    <div class="chart-card full">
+    <div class="chart-card">
         <h2>Defect Trend by Date</h2>
-        <canvas id="defectTrendChart"></canvas>
+        <div class="chart-box trend-box">
+            <canvas id="defectTrendChart"></canvas>
+        </div>
     </div>
 
-    <div class="chart-card full">
+    <div class="chart-card">
         <h2>Camera Trend by Date</h2>
-        <canvas id="cameraTrendChart"></canvas>
+        <div class="chart-box trend-box">
+            <canvas id="cameraTrendChart"></canvas>
+        </div>
     </div>
 
 </div>
@@ -97,7 +109,7 @@ const hoursData = [
     {% endfor %}
 ];
 
-const defectTrendRaw = [
+const defectTrendRawz = [
     {% for item in data.defect_trend %}
         {
             date: "{{ item.date }}",
@@ -123,13 +135,8 @@ const cameraTrendRaw = [
 {% else %}
 
 <div class="empty-state">
-
     <h2>📊 {{ t("no_analytics") }}</h2>
-
-    <p>
-        {{ t("place_logs") }}
-    </p>
-
+    <p>{{ t("place_logs") }}</p>
 </div>
 
 {% endif %}
