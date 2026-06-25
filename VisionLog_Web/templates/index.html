@@ -39,9 +39,15 @@ VisionLog Dashboard
 {% endif %}
 
 <div class="cards">
+
     <div class="card">
         <h3>{{ t("total_rejections") }}</h3>
         <p>{{ data.total_rejections }}</p>
+    </div>
+
+    <div class="card">
+    <h3>{{ t("today_rejections") }}</h3>
+    <p>{{ today_rejections }}</p>
     </div>
 
     <div class="card">
@@ -53,6 +59,7 @@ VisionLog Dashboard
         <h3>{{ t("critical_camera") }}</h3>
         <p>{{ data.critical_camera }}</p>
     </div>
+
 </div>
 
 <h2>{{ t("verify_log") }}</h2>
@@ -116,4 +123,3 @@ VisionLog Dashboard
 {% endif %}
 
 {% endblock %}
-
