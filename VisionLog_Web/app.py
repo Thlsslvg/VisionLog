@@ -92,7 +92,7 @@ TEXTS = {
         "no_recent_logs": "No recent logs available.",
         "no_analytics": "No analytics data available yet.",
         "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running.",
-                                                                                                                        "today_rejections": "Today's Rejections"
+"today_rejections": "Today's Rejections"
     },
 
     "pt": {
@@ -127,7 +127,7 @@ TEXTS = {
         "no_recent_logs": "Nenhum log recente disponível.",
         "no_analytics": "Ainda não há dados suficientes para análise.",
         "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução.",
-    "today_rejections": "Rejeições Hoje",
+"today_rejections": "Rejeições Hoje",
     }
 }
 
