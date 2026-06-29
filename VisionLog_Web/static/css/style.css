@@ -5,15 +5,15 @@
 body {
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
-    background: #0E1117;
-    color: #F0F6FC;
+    background: #0b0b16;
+    color: #8B949E;
 }
 
 .sidebar {
     width: 260px;
     height: 100vh;
     position: fixed;
-    background: #161B22;
+    background: #0b0b16;
     padding: 25px 20px;
     border-right: 1px solid #30363D;
 }
@@ -29,13 +29,13 @@ body {
 }
 
 .logo-area h2 {
-    color: #58A6FF;
+    color: #8B949E;
     margin: 0;
 }
 
 .sidebar nav a {
     display: block;
-    color: #C9D1D9;
+    color: #8B949E;
     text-decoration: none;
     padding: 13px 15px;
     margin-bottom: 10px;
@@ -44,7 +44,7 @@ body {
 }
 
 .sidebar nav a:hover {
-    background: #21262D;
+    background: #0e0e25;
     color: #58A6FF;
 }
 
@@ -66,8 +66,8 @@ body {
 }
 
 .card {
-    background: #161B22;
-    border: 1px solid #30363D;
+    background: #0b0b16;
+    border: 1px solid #000000;
     border-radius: 16px;
     padding: 22px;
     min-width: 220px;
@@ -81,16 +81,16 @@ body {
 .card p {
     font-size: 30px;
     font-weight: bold;
-    color: #58A6FF;
+    color: #8B949E;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #161B22;
+    background: #0b0b16;
     border-radius: 14px;
     overflow: hidden;
-    border: 1px solid #30363D;
+    border: 1px solid #8B949E;
 }
 
 th,
@@ -160,35 +160,35 @@ button,
 .export-button {
     padding: 12px;
     border-radius: 10px;
-    border: 1px solid #30363D;
-    background: #161B22;
+    border: 1px solid #000000;
+    background: #0b0b16;
     color: #F0F6FC;
     text-decoration: none;
 }
 
 button,
 .export-button {
-    background: #238636;
+    background: #156723;
     cursor: pointer;
 }
 
 .alarm {
-    background: #DA3633;
+    background: #b5120f;
     padding: 18px;
     border-radius: 14px;
     margin-bottom: 25px;
 }
 
 .normal {
-    background: #238636;
+    background: #156723;
     padding: 18px;
     border-radius: 14px;
     margin-bottom: 25px;
 }
 
 .validation-box {
-    background: #161B22;
-    border: 1px solid #30363D;
+    background: #0b0b16;
+    border: 1px solid #0b0b16;
     padding: 20px;
     border-radius: 14px;
     margin-bottom: 25px;
@@ -209,8 +209,8 @@ pre {
 }
 
 .refresh-button {
-    background: #2563EB;
-    color: white;
+    background: #112f77;
+    color: #a6bad3;
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -220,7 +220,7 @@ pre {
 }
 
 .refresh-button:hover {
-    background: #1D4ED8;
+    background: #13318e;
 }
 
 .empty-state {
