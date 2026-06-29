@@ -1,17 +1,17 @@
 const colors = [
-    "#FF6B6B",
-    "#4DABF7",
-    "#51CF66",
-    "#FFD43B",
-    "#CC5DE8",
-    "#FF922B",
-    "#20C997",
-    "#748FFC",
-    "#F06595",
-    "#94D82D",
-    "#E599F7",
-    "#66D9E8",
-    "#FFA8A8",
+    "#ff1e1e",
+    "#3baaff",
+    "#50f36b",
+    "#ffd020",
+    "#d74bf8",
+    "#ff8411",
+    "#14eaab",
+    "#5072fb",
+    "#ff4689",
+    "#9ef325",
+    "#d25fed",
+    "#60e5f6",
+    "#af6464",
     "#B197FC"
 ];
 
@@ -49,13 +49,13 @@ aspectRatio: 2,
     }
 };
 
+
 function createChart(id, config) {
     const canvas = document.getElementById(id);
 
     if (!canvas) {
         return;
     }
-
     new Chart(canvas, config);
 }
 
@@ -97,6 +97,7 @@ createChart("defectsChart", {
             label: "Occurrences",
             data: defectsData,
             backgroundColor: "#58A6FF"
+            
         }]
     },
     options: defaultOptions
