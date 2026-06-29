@@ -14,11 +14,11 @@ Settings
 <form method="POST" class="settings-form">
 
     <select name="language">
-        <option value="en" {% if settings.language == "en" %}selected{% endif %}>
+        <option value="en" {% if settings.language =="en" %}selected{% endif %}>
             English
         </option>
 
-        <option value="pt" {% if settings.language == "pt" %}selected{% endif %}>
+        <option value="pt" {% if settings.language =="pt" %}selected{% endif %}>
             Português
         </option>
     </select>
