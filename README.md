@@ -25,8 +25,8 @@ The project automatically processes inspection logs, stores rejection data in a 
 * Rejections by camera
 * Rejections by date
 * Rejections by hour
-* Defect trend by date (multi-line chart)
-* Camera trend by date (multi-line chart)
+* Defect trend by date 
+* Camera trend by date 
 
 ## Logs
 
@@ -120,7 +120,7 @@ Supported format:
 Camera: 5
 Status: FAIL
 Defect: Glue
-Time: 16:29
+Time: 16:30
 ```
 
 Validation checks:
