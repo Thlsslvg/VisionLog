@@ -6,7 +6,7 @@ from datetime import datetime
 from io import StringIO, BytesIO
 from pathlib import Path
 
-import pandas as pd
+from openpyxl import Workbook
 
 from flask import (
     Flask,
@@ -15,7 +15,8 @@ from flask import (
     redirect,
     url_for,
     Response,
-    session
+    session,
+    send_file
 )
 
 
@@ -65,34 +66,42 @@ TEXTS = {
         "analytics": "Analytics",
         "logs": "Logs",
         "settings": "Settings",
+
         "total_rejections": "Total Rejections",
+        "today_rejections": "Today's Rejections",
         "main_defect": "Main Defect",
         "critical_camera": "Critical Camera",
         "recent_logs": "Recent Logs",
+
         "verify_log": "Verify Log",
         "validate": "Validate",
+
         "alarm": "Alarm",
         "system_normal": "System Normal",
         "acknowledge": "Acknowledge Alarm",
+
         "filters": "Filters",
         "camera": "Camera",
         "defect": "Defect",
         "status": "Status",
         "file": "File",
+
         "export_csv": "Export CSV",
         "export_excel": "Export Excel",
+
         "language": "Language",
         "save": "Save",
         "system_status": "System Status",
         "database": "Database",
         "log_folder": "Log Folder",
+
         "refresh": "Refresh",
+
         "no_data": "No data available yet.",
         "no_logs": "No logs found yet.",
         "no_recent_logs": "No recent logs available.",
         "no_analytics": "No analytics data available yet.",
-        "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running.",
-"today_rejections": "Today's Rejections"
+        "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running."
     },
 
     "pt": {
@@ -100,36 +109,71 @@ TEXTS = {
         "analytics": "Análises",
         "logs": "Logs",
         "settings": "Configurações",
+
         "total_rejections": "Total de Rejeições",
+        "today_rejections": "Rejeições Hoje",
         "main_defect": "Defeito Principal",
         "critical_camera": "Câmera Crítica",
         "recent_logs": "Logs Recentes",
+
         "verify_log": "Verificar Log",
         "validate": "Validar",
+
         "alarm": "Alarme",
         "system_normal": "Sistema Normal",
         "acknowledge": "Reconhecer Alarme",
+
         "filters": "Filtros",
         "camera": "Câmera",
         "defect": "Defeito",
         "status": "Status",
         "file": "Arquivo",
+
         "export_csv": "Exportar CSV",
         "export_excel": "Exportar Excel",
+
         "language": "Idioma",
         "save": "Salvar",
         "system_status": "Status do Sistema",
         "database": "Banco de Dados",
         "log_folder": "Pasta de Logs",
+
         "refresh": "Atualizar",
+
         "no_data": "Ainda não há dados disponíveis.",
         "no_logs": "Nenhum log encontrado ainda.",
         "no_recent_logs": "Nenhum log recente disponível.",
         "no_analytics": "Ainda não há dados suficientes para análise.",
-        "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução.",
-"today_rejections": "Rejeições Hoje",
+        "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução."
     }
 }
+
+
+def ensure_folders():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LOG_FOLDER.mkdir(parents=True, exist_ok=True)
+
+
+def ensure_database():
+    ensure_folders()
+
+    connection = sqlite3.connect(DB_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS rejections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            camera TEXT NOT NULL,
+            status TEXT NOT NULL,
+            defect TEXT NOT NULL,
+            time TEXT NOT NULL,
+            filename TEXT NOT NULL UNIQUE,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    connection.commit()
+    connection.close()
 
 
 def load_config():
@@ -156,9 +200,23 @@ def inject_language():
 
 
 def get_connection():
+    ensure_database()
+
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
+
     return connection
+
+
+def reset_alarm_session_if_database_empty(total_rejections, today_rejections):
+    today_key = datetime.now().strftime("%Y-%m-%d")
+
+    if total_rejections == 0:
+        session["alarm_date"] = today_key
+        session["ack_count"] = 0
+
+    if today_rejections == 0:
+        session["ack_count"] = 0
 
 
 def fetch_all_logs(camera=None, defect=None, status=None, search=None):
@@ -220,6 +278,15 @@ def get_dashboard_data():
     logs = fetch_all_logs()
 
     total = len(logs)
+
+    if total == 0:
+        return {
+            "total_rejections": 0,
+            "main_defect": "-",
+            "critical_camera": "-",
+            "recent_logs": [],
+            "has_data": False
+        }
 
     defects = {}
     cameras = {}
@@ -350,6 +417,11 @@ def dashboard():
     today_rejections = get_today_rejections()
     today_key = datetime.now().strftime("%Y-%m-%d")
 
+    reset_alarm_session_if_database_empty(
+        data["total_rejections"],
+        today_rejections
+    )
+
     if session.get("alarm_date") != today_key:
         session["alarm_date"] = today_key
         session["ack_count"] = 0
@@ -358,6 +430,11 @@ def dashboard():
         session["ack_count"] = 0
 
     new_rejections = today_rejections - session["ack_count"]
+
+    if new_rejections < 0:
+        new_rejections = 0
+        session["ack_count"] = today_rejections
+
     alarm_active = new_rejections >= ALARM_LIMIT
 
     validation = None
@@ -498,40 +575,55 @@ def export_csv():
 def export_excel():
     logs_data = fetch_all_logs()
 
-    data = []
-
-    for log in logs_data:
-        data.append(
-            {
-                "ID": log["id"],
-                "Camera": log["camera"],
-                "Status": log["status"],
-                "Defect": log["defect"],
-                "Time": log["time"],
-                "Filename": log["filename"],
-                "Created At": log["created_at"]
-            }
-        )
-
-    df = pd.DataFrame(data)
-
     output = BytesIO()
 
-    with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        df.to_excel(
-            writer,
-            index=False,
-            sheet_name="Logs"
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Logs"
+
+    headers = [
+        "ID",
+        "Camera",
+        "Status",
+        "Defect",
+        "Time",
+        "Filename",
+        "Created At"
+    ]
+
+    sheet.append(headers)
+
+    for log in logs_data:
+        sheet.append(
+            [
+                log["id"],
+                log["camera"],
+                log["status"],
+                log["defect"],
+                log["time"],
+                log["filename"],
+                log["created_at"]
+            ]
         )
 
+    for column in sheet.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+
+        for cell in column:
+            if cell.value is not None:
+                max_length = max(max_length, len(str(cell.value)))
+
+        sheet.column_dimensions[column_letter].width = max_length + 2
+
+    workbook.save(output)
     output.seek(0)
 
-    return Response(
-        output.getvalue(),
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={
-            "Content-Disposition": "attachment; filename=visionlog_logs.xlsx"
-        }
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name="visionlog_logs.xlsx",
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
 
@@ -568,9 +660,11 @@ def settings():
 
 
 if __name__ == "__main__":
+    ensure_database()
+
     app.run(
         debug=False,
         host="127.0.0.1",
         port=5000,
         use_reloader=False
-    )
+    )   
