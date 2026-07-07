@@ -101,7 +101,13 @@ TEXTS = {
         "no_logs": "No logs found yet.",
         "no_recent_logs": "No recent logs available.",
         "no_analytics": "No analytics data available yet.",
-        "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running."
+        "place_logs": "Place TXT logs in the monitored folder and keep the Watchdog running.",
+        "global_defect_ranking":"Global Defect Ranking",
+        "rejections_by_camera":"Rejections by Camera",
+        "rejections_by_date":"Rejections by Date",
+        "rejections_by_hour":"Rejections by Hour",
+        "defect_trend_by_date":"Defect Trend by Date",
+        "camera_trend_by_date":"Camera Trend by Date"
     },
 
     "pt": {
@@ -144,7 +150,13 @@ TEXTS = {
         "no_logs": "Nenhum log encontrado ainda.",
         "no_recent_logs": "Nenhum log recente disponível.",
         "no_analytics": "Ainda não há dados suficientes para análise.",
-        "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução."
+        "place_logs": "Coloque logs TXT na pasta monitorada e mantenha o Watchdog em execução.",
+        "global_defect_ranking":"Ranking Global de Defeitos",
+        "rejections_by_camera":"Rejeições por Câmera",
+        "rejections_by_date":"Rejeições por Data",
+        "rejections_by_hour":"Rejeições por Hora",
+        "defect_trend_by_date":"Tendência de Defeitos por Data",
+        "camera_trend_by_date":"Tendência das Câmeras por Data"
     }
 }
 
