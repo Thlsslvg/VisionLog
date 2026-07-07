@@ -17,42 +17,42 @@ Analytics
 <div class="chart-grid">
 
     <div class="chart-card">
-        <h2>Global Defect Ranking</h2>
+        <h2>{{ t("global_defect_ranking") }}</h2>
         <div class="chart-box">
             <canvas id="defectsChart"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h2>Rejections by Camera</h2>
+        <h2>{{ t("rejections_by_camera") }}</h2>
         <div class="chart-box">
             <canvas id="camerasChart"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h2>Rejections by Date</h2>
+        <h2>{{ t("rejections_by_date") }}</h2>
         <div class="chart-box">
             <canvas id="datesChart"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h2>Rejections by Hour</h2>
+        <h2>{{ t("rejections_by_hour") }}</h2>
         <div class="chart-box">
             <canvas id="hoursChart"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h2>Defect Trend by Date</h2>
+        <h2>{{ t("defect_trend_by_date") }}</h2>
         <div class="chart-box trend-box">
             <canvas id="defectTrendChart"></canvas>
         </div>
     </div>
 
     <div class="chart-card">
-        <h2>Camera Trend by Date</h2>
+        <h2>{{ t("camera_trend_by_date") }}</h2>
         <div class="chart-box trend-box">
             <canvas id="cameraTrendChart"></canvas>
         </div>
@@ -61,73 +61,75 @@ Analytics
 </div>
 
 <script>
+
 const defectsLabels = [
-    {% for item in data.defects %}
-        "{{ item.defect }}",
-    {% endfor %}
+{% for item in data.defects %}
+"{{ item.defect }}",
+{% endfor %}
 ];
 
 const defectsData = [
-    {% for item in data.defects %}
-        {{ item.count }},
-    {% endfor %}
+{% for item in data.defects %}
+{{ item.count }},
+{% endfor %}
 ];
 
 const camerasLabels = [
-    {% for item in data.cameras %}
-        "Camera {{ item.camera }}",
-    {% endfor %}
+{% for item in data.cameras %}
+"Camera {{ item.camera }}",
+{% endfor %}
 ];
 
 const camerasData = [
-    {% for item in data.cameras %}
-        {{ item.count }},
-    {% endfor %}
+{% for item in data.cameras %}
+{{ item.count }},
+{% endfor %}
 ];
 
 const datesLabels = [
-    {% for item in data.dates %}
-        "{{ item.date }}",
-    {% endfor %}
+{% for item in data.dates %}
+"{{ item.date }}",
+{% endfor %}
 ];
 
 const datesData = [
-    {% for item in data.dates %}
-        {{ item.count }},
-    {% endfor %}
+{% for item in data.dates %}
+{{ item.count }},
+{% endfor %}
 ];
 
 const hoursLabels = [
-    {% for item in data.hours %}
-        "{{ item.hour }}h",
-    {% endfor %}
+{% for item in data.hours %}
+"{{ item.hour }}h",
+{% endfor %}
 ];
 
 const hoursData = [
-    {% for item in data.hours %}
-        {{ item.count }},
-    {% endfor %}
+{% for item in data.hours %}
+{{ item.count }},
+{% endfor %}
 ];
 
 const defectTrendRaw = [
-    {% for item in data.defect_trend %}
-        {
-            date: "{{ item.date }}",
-            defect: "{{ item.defect }}",
-            count: {{ item.count }}
-        },
-    {% endfor %}
+{% for item in data.defect_trend %}
+{
+    date: "{{ item.date }}",
+    defect: "{{ item.defect }}",
+    count: {{ item.count }}
+},
+{% endfor %}
 ];
 
 const cameraTrendRaw = [
-    {% for item in data.camera_trend %}
-        {
-            date: "{{ item.date }}",
-            camera: "Camera {{ item.camera }}",
-            count: {{ item.count }}
-        },
-    {% endfor %}
+{% for item in data.camera_trend %}
+{
+    date: "{{ item.date }}",
+    camera: "Camera {{ item.camera }}",
+    count: {{ item.count }}
+},
+{% endfor %}
 ];
+
 </script>
 
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
@@ -138,6 +140,7 @@ const cameraTrendRaw = [
     <h2>📊 {{ t("no_analytics") }}</h2>
     <p>{{ t("place_logs") }}</p>
 </div>
+
 
 {% endif %}
 
