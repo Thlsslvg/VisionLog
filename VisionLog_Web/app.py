@@ -31,7 +31,6 @@ if getattr(sys, "frozen", False):
 else:
     APP_DIR = BASE_DIR
 
-
 def find_project_root():
     possible_paths = [
         APP_DIR,
